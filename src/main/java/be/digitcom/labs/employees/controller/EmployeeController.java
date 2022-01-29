@@ -1,6 +1,5 @@
 package be.digitcom.labs.employees.controller;
 
-import be.digitcom.labs.employees.exception.ResourceNotFoundException;
 import be.digitcom.labs.employees.model.Employee;
 import be.digitcom.labs.employees.service.EmployeeService;
 import org.springframework.http.HttpStatus;
