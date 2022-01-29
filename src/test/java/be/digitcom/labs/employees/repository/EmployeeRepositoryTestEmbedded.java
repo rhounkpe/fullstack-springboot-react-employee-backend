@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// https://www.youtube.com/watch?v=9UmwBfZ98U8&list=PLSVW22jAG8pByICwbp3c99FoXWIaDJ1gv&index=2&ab_channel=ProgrammingTechie
 @DataJpaTest
 @ActiveProfiles("test")
 class EmployeeRepositoryTestEmbedded {
