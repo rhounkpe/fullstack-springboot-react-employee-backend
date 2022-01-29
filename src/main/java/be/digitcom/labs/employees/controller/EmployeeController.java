@@ -3,6 +3,7 @@ package be.digitcom.labs.employees.controller;
 import be.digitcom.labs.employees.exception.ResourceNotFoundException;
 import be.digitcom.labs.employees.model.Employee;
 import be.digitcom.labs.employees.repository.EmployeeRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,7 @@ public class EmployeeController {
     // Update employee
     @PutMapping("/{id}")
     public ResponseEntity<Employee> update(@PathVariable UUID id, @RequestBody Employee employeeDetails) {
+        // UUID uuid = UUID.fromString(id);
         Employee employee = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + id));
 
@@ -51,6 +53,17 @@ public class EmployeeController {
         employee.setEmail(employeeDetails.getEmail());
 
         Employee savedEmployee = repository.save(employee);
-        return ResponseEntity.ok(savedEmployee);
+        return ResponseEntity.ok(employee);
+    }
+
+    // Delete employee REST API
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> delete(@PathVariable UUID id) {
+        Employee employee = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee does not exist with ID: " + id));
+
+        repository.delete(employee);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
