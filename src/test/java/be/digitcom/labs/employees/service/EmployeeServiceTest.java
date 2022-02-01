@@ -62,6 +62,14 @@ class EmployeeServiceTest {
 
         when(repository.findAll()).thenReturn(employeeList);
         assertEquals(4, service.findAll().size());
+
+        // How to use Argument Captor to verify that at the 1st position in this list with have an object
+        // which has as first name "Dominique"
+        // Is it interesting to verify such a behavior?
+        // Throw java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0
+        verify(repository, times(1)).findAll();
+        final List<Employee> employees = employeeArgumentCaptor.getAllValues();
+        assertEquals("Dominique", employees.get(0).getFirstName());
     }
 
     @Test
@@ -106,6 +114,9 @@ class EmployeeServiceTest {
         when(repository.findById(UUID.fromString("f118e7f3-5e45-4c31-bddd-920c2e7a83b6"))).thenReturn(Optional.of(dom));
 
         assertEquals(dom.getId(), service.findById(UUID.fromString("f118e7f3-5e45-4c31-bddd-920c2e7a83b6")).getId());
+
+        // Throw NullPointerException
+        // verify(repository, times(1)).findById(employeeArgumentCaptor.capture().getId());
 
     }
 
