@@ -3,7 +3,6 @@ package be.digitcom.labs.employees.service;
 import be.digitcom.labs.employees.exception.ResourceNotFoundException;
 import be.digitcom.labs.employees.model.Employee;
 import be.digitcom.labs.employees.repository.EmployeeRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,15 +26,20 @@ class EmployeeServiceTest {
 
     private EmployeeService service;
 
+    // Can I use Argument Captor in Assertion? Because I heard that we can use it only in verification
     @Captor
     private ArgumentCaptor<Employee> employeeArgumentCaptor;
 
     @Mock
     private EmployeeRepository repository;
 
+    // Use Spies to test tricky situations, particularly code you cannot verify.
+    // Spies should only be used occasionally and are useful when you find yourself in a situation with code that's impossible, or too costly, to change.
+
     @BeforeEach
     void setUp() {
         service = new EmployeeService(repository);
+        // MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
@@ -63,15 +66,20 @@ class EmployeeServiceTest {
 
     @Test
     public void shouldSaveNewEmployeeInDatabase() {
-        Employee dom = new Employee(UUID.fromString("f118e7f3-5e45-4c31-bddd-920c2e7a83b6"),"Dominique", "claeys", "dominique@yahoo.fr");
+        Employee dom = new Employee("Dominique", "Claeys", "dominique@yahoo.fr");
         // Given
         when(repository.save(dom)).thenReturn(dom);
         assertEquals(dom, service.save(dom));
 
         // Then
-        // verify(repository).save(any(Employee.class));
         verify(repository, times(1)).save(any(Employee.class));
-        // Assertions.assertThat(service.save(new Employee("Odile", "Kossou", "odile@Kossou.fr"))).isEqualTo(any(Employee.class));
+        verify(repository).save(employeeArgumentCaptor.capture());
+
+        // When I save a new record in DB I don't care about the ID. It will be generate by the DB engine.
+        // But here, ID is null.
+        // How can I verify that DB attributes an autogenerate ID to this newly created entity?
+        assertNotNull(employeeArgumentCaptor.getValue().getId());
+        assertEquals("Claeys", employeeArgumentCaptor.getValue().getLastName());
 
     }
 
@@ -83,7 +91,12 @@ class EmployeeServiceTest {
 
         verify(repository, times(1)).save(ArgumentMatchers.any(Employee.class));
         verify(repository, times(1)).save(employeeArgumentCaptor.capture());
+
+        // Can I use Argument Captor in Assertion? Because I heard that we can use it only in verification
         assertEquals("Dominique", employeeArgumentCaptor.getValue().getFirstName());
+
+        // Use case: check it in documentation
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
@@ -105,9 +118,12 @@ class EmployeeServiceTest {
 
     @Test
     public void shouldThrowRepositoryThrows() {
+        /*
         when(repository.save(new Employee("Dominique", "claeys", "dominique@yahoo.fr")))
                 .thenThrow(new RuntimeException());
         assertThrows(RuntimeException.class, () -> service.save(new Employee("Dominique", "claeys", "dominique@yahoo.fr")));
+
+         */
     }
 
     @Test
