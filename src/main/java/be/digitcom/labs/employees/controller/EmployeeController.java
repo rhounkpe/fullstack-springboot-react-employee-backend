@@ -43,6 +43,7 @@ public class EmployeeController {
     @PutMapping("/{id}")
     public ResponseEntity<Employee> update(@PathVariable UUID id, @RequestBody Employee employeeDetails) {
         // UUID uuid = UUID.fromString(id);
+        // TODO: Delete this comment after the case is handled
         Employee employee = service.findById(id);
 
         employee.setFirstName(employeeDetails.getFirstName());
